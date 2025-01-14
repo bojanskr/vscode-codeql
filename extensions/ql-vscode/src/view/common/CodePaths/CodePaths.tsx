@@ -1,20 +1,28 @@
-import * as React from "react";
-import { useRef, useState } from "react";
-import styled from "styled-components";
+import { styled } from "styled-components";
 import { VSCodeLink } from "@vscode/webview-ui-toolkit/react";
 
-import { Overlay, ThemeProvider } from "@primer/react";
-
-import {
+import type {
   AnalysisMessage,
   CodeFlow,
   ResultSeverity,
-} from "../../../remote-queries/shared/analysis-result";
-import { CodePathsOverlay } from "./CodePathsOverlay";
+} from "../../../variant-analysis/shared/analysis-result";
+import { vscode } from "../../vscode-api";
 
 const ShowPathsLink = styled(VSCodeLink)`
   cursor: pointer;
 `;
+
+const Label = styled.span`
+  color: var(--vscode-descriptionForeground);
+  margin-left: 10px;
+`;
+
+function getShortestPathLength(codeFlows: CodeFlow[]): number {
+  const allPathLengths = codeFlows
+    .map((codeFlow) => codeFlow.threadFlows.length)
+    .flat();
+  return Math.min(...allPathLengths);
+}
 
 export type CodePathsProps = {
   codeFlows: CodeFlow[];
@@ -29,35 +37,22 @@ export const CodePaths = ({
   message,
   severity,
 }: CodePathsProps) => {
-  const [isOpen, setIsOpen] = useState(false);
-
-  const linkRef = useRef<HTMLAnchorElement>(null);
-
-  const closeOverlay = () => setIsOpen(false);
+  const onShowPathsClick = () => {
+    vscode.postMessage({
+      t: "showDataFlowPaths",
+      dataFlowPaths: {
+        codeFlows,
+        ruleDescription,
+        message,
+        severity,
+      },
+    });
+  };
 
   return (
     <>
-      <ShowPathsLink onClick={() => setIsOpen(true)} ref={linkRef}>
-        Show paths
-      </ShowPathsLink>
-      {isOpen && (
-        <ThemeProvider colorMode="auto">
-          <Overlay
-            returnFocusRef={linkRef}
-            onEscape={closeOverlay}
-            onClickOutside={closeOverlay}
-            anchorSide="outside-top"
-          >
-            <CodePathsOverlay
-              codeFlows={codeFlows}
-              ruleDescription={ruleDescription}
-              message={message}
-              severity={severity}
-              onClose={closeOverlay}
-            />
-          </Overlay>
-        </ThemeProvider>
-      )}
+      <ShowPathsLink onClick={onShowPathsClick}>Show paths</ShowPathsLink>
+      <Label>(Shortest: {getShortestPathLength(codeFlows)})</Label>
     </>
   );
 };

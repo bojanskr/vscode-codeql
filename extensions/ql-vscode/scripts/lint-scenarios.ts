@@ -8,13 +8,19 @@ import { getFiles } from "./util/files";
 
 const extensionDirectory = resolve(__dirname, "..");
 const rootDirectory = resolve(extensionDirectory, "../..");
-const scenariosDirectory = resolve(extensionDirectory, "src/mocks/scenarios");
+const scenariosDirectory = resolve(
+  extensionDirectory,
+  "src/common/mock-gh-api/scenarios",
+);
 
 const debug = process.env.RUNNER_DEBUG || process.argv.includes("--debug");
 
 async function lintScenarios() {
   const schema = createGenerator({
-    path: resolve(extensionDirectory, "src/mocks/gh-api-request.ts"),
+    path: resolve(
+      extensionDirectory,
+      "src/common/mock-gh-api/gh-api-request.ts",
+    ),
     tsconfig: resolve(extensionDirectory, "tsconfig.json"),
     type: "GitHubApiRequest",
     skipTypeCheck: true,
@@ -28,7 +34,7 @@ async function lintScenarios() {
     throw new Error(`Invalid schema: ${ajv.errorsText()}`);
   }
 
-  const validate = await ajv.compile(schema);
+  const validate = ajv.compile(schema);
 
   let invalidFiles = 0;
 
@@ -66,7 +72,7 @@ async function lintScenarios() {
   }
 }
 
-lintScenarios().catch((e) => {
+lintScenarios().catch((e: unknown) => {
   console.error(e);
   process.exit(2);
 });

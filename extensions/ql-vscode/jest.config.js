@@ -4,12 +4,14 @@
  */
 
 /** @type {import('@jest/types').Config.InitialOptions} */
+// eslint-disable-next-line import/no-commonjs
 module.exports = {
   projects: [
     "<rootDir>/src/view",
-    "<rootDir>/test",
-    "<rootDir>/src/vscode-tests/cli-integration",
-    "<rootDir>/src/vscode-tests/no-workspace",
-    "<rootDir>/src/vscode-tests/minimal-workspace",
+    "<rootDir>/test/unit-tests",
+    "<rootDir>/test/vscode-tests/activated-extension",
+    "<rootDir>/test/vscode-tests/cli-integration",
+    "<rootDir>/test/vscode-tests/no-workspace",
+    "<rootDir>/test/vscode-tests/minimal-workspace",
   ],
 };

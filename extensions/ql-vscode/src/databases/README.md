@@ -1,3 +1,3 @@
 ### Databases
 
-This folder contains code for the new experimental databases panel and new query run experience.
+This folder contains code for the (local) databases panel and the variant analysis repositories panel.

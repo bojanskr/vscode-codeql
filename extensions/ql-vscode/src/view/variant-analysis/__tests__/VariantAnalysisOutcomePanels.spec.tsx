@@ -1,22 +1,19 @@
-import * as React from "react";
 import { render as reactRender, screen } from "@testing-library/react";
+import type { VariantAnalysis } from "../../../variant-analysis/shared/variant-analysis";
 import {
-  VariantAnalysis,
   VariantAnalysisFailureReason,
   VariantAnalysisRepoStatus,
   VariantAnalysisStatus,
-} from "../../../remote-queries/shared/variant-analysis";
-import {
-  VariantAnalysisOutcomePanelProps,
-  VariantAnalysisOutcomePanels,
-} from "../VariantAnalysisOutcomePanels";
-import { createMockVariantAnalysis } from "../../../vscode-tests/factories/remote-queries/shared/variant-analysis";
-import { createMockRepositoryWithMetadata } from "../../../vscode-tests/factories/remote-queries/shared/repository";
+} from "../../../variant-analysis/shared/variant-analysis";
+import type { VariantAnalysisOutcomePanelProps } from "../VariantAnalysisOutcomePanels";
+import { VariantAnalysisOutcomePanels } from "../VariantAnalysisOutcomePanels";
+import { createMockVariantAnalysis } from "../../../../test/factories/variant-analysis/shared/variant-analysis";
+import { createMockRepositoryWithMetadata } from "../../../../test/factories/variant-analysis/shared/repository";
 import {
   createMockScannedRepo,
   createMockScannedRepos,
-} from "../../../vscode-tests/factories/remote-queries/shared/scanned-repositories";
-import { defaultFilterSortState } from "../../../pure/variant-analysis-filter-sort";
+} from "../../../../test/factories/variant-analysis/shared/scanned-repositories";
+import { defaultFilterSortState } from "../../../variant-analysis/shared/variant-analysis-filter-sort";
 
 describe(VariantAnalysisOutcomePanels.name, () => {
   const defaultVariantAnalysis = {

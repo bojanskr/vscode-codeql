@@ -1,15 +1,13 @@
-import React from "react";
-
-import { ComponentMeta, ComponentStory } from "@storybook/react";
+import type { Meta, StoryFn } from "@storybook/react";
 
 import { VariantAnalysisContainer } from "../../view/variant-analysis/VariantAnalysisContainer";
 import { VariantAnalysisHeader } from "../../view/variant-analysis/VariantAnalysisHeader";
 import {
   VariantAnalysisRepoStatus,
   VariantAnalysisStatus,
-} from "../../remote-queries/shared/variant-analysis";
-import { createMockVariantAnalysis } from "../../vscode-tests/factories/remote-queries/shared/variant-analysis";
-import { createMockScannedRepo } from "../../vscode-tests/factories/remote-queries/shared/scanned-repositories";
+} from "../../variant-analysis/shared/variant-analysis";
+import { createMockVariantAnalysis } from "../../../test/factories/variant-analysis/shared/variant-analysis";
+import { createMockScannedRepo } from "../../../test/factories/variant-analysis/shared/scanned-repositories";
 
 export default {
   title: "Variant Analysis/Variant Analysis Header",
@@ -59,9 +57,9 @@ export default {
       },
     },
   },
-} as ComponentMeta<typeof VariantAnalysisHeader>;
+} as Meta<typeof VariantAnalysisHeader>;
 
-const Template: ComponentStory<typeof VariantAnalysisHeader> = (args) => (
+const Template: StoryFn<typeof VariantAnalysisHeader> = (args) => (
   <VariantAnalysisHeader {...args} />
 );
 

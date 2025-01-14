@@ -1,12 +1,17 @@
-import * as React from "react";
-import { render as reactRender, screen, waitFor } from "@testing-library/react";
+import {
+  act,
+  render as reactRender,
+  screen,
+  waitFor,
+} from "@testing-library/react";
 import {
   VariantAnalysisRepoStatus,
   VariantAnalysisScannedRepositoryDownloadStatus,
-} from "../../../remote-queries/shared/variant-analysis";
-import userEvent from "@testing-library/user-event";
-import { RepoRow, RepoRowProps } from "../RepoRow";
-import { createMockRepositoryWithMetadata } from "../../../vscode-tests/factories/remote-queries/shared/repository";
+} from "../../../variant-analysis/shared/variant-analysis";
+import { userEvent } from "@testing-library/user-event";
+import type { RepoRowProps } from "../RepoRow";
+import { RepoRow } from "../RepoRow";
+import { createMockRepositoryWithMetadata } from "../../../../test/factories/variant-analysis/shared/repository";
 
 describe(RepoRow.name, () => {
   const render = (props: Partial<RepoRowProps> = {}) => {
@@ -33,10 +38,7 @@ describe(RepoRow.name, () => {
     expect(
       screen.queryByRole("img", {
         // There should not be any icons, except for the icons which are always shown
-        name: (name) =>
-          !["expand", "stars count", "last updated"].includes(
-            name.toLowerCase(),
-          ),
+        name: (name) => !["expand", "stars count"].includes(name.toLowerCase()),
       }),
     ).not.toBeInTheDocument();
 
@@ -87,7 +89,10 @@ describe(RepoRow.name, () => {
     render({
       status: VariantAnalysisRepoStatus.Succeeded,
       resultCount: 178,
-      downloadStatus: VariantAnalysisScannedRepositoryDownloadStatus.Pending,
+      downloadState: {
+        repositoryId: 1,
+        downloadStatus: VariantAnalysisScannedRepositoryDownloadStatus.Pending,
+      },
     });
 
     expect(
@@ -101,7 +106,11 @@ describe(RepoRow.name, () => {
     render({
       status: VariantAnalysisRepoStatus.Succeeded,
       resultCount: 178,
-      downloadStatus: VariantAnalysisScannedRepositoryDownloadStatus.InProgress,
+      downloadState: {
+        repositoryId: 1,
+        downloadStatus:
+          VariantAnalysisScannedRepositoryDownloadStatus.InProgress,
+      },
     });
 
     expect(
@@ -115,7 +124,11 @@ describe(RepoRow.name, () => {
     render({
       status: VariantAnalysisRepoStatus.Succeeded,
       resultCount: 178,
-      downloadStatus: VariantAnalysisScannedRepositoryDownloadStatus.Succeeded,
+      downloadState: {
+        repositoryId: 1,
+        downloadStatus:
+          VariantAnalysisScannedRepositoryDownloadStatus.Succeeded,
+      },
     });
 
     expect(
@@ -129,7 +142,10 @@ describe(RepoRow.name, () => {
     render({
       status: VariantAnalysisRepoStatus.Succeeded,
       resultCount: 178,
-      downloadStatus: VariantAnalysisScannedRepositoryDownloadStatus.Failed,
+      downloadState: {
+        repositoryId: 1,
+        downloadStatus: VariantAnalysisScannedRepositoryDownloadStatus.Failed,
+      },
     });
 
     expect(
@@ -260,26 +276,7 @@ describe(RepoRow.name, () => {
     ).toBeInTheDocument();
   });
 
-  it("shows updated at", () => {
-    render({
-      repository: {
-        ...createMockRepositoryWithMetadata(),
-        // 1 month ago
-        updatedAt: new Date(
-          Date.now() - 1000 * 60 * 60 * 24 * 30,
-        ).toISOString(),
-      },
-    });
-
-    expect(screen.getByText("last month")).toBeInTheDocument();
-    expect(
-      screen.getByRole("img", {
-        name: "Last updated",
-      }),
-    ).toBeInTheDocument();
-  });
-
-  it("does not show star count and updated at when unknown", () => {
+  it("does not show star count when unknown", () => {
     render({
       repository: {
         id: undefined,
@@ -293,11 +290,6 @@ describe(RepoRow.name, () => {
         name: "Stars count",
       }),
     ).not.toBeInTheDocument();
-    expect(
-      screen.queryByRole("img", {
-        name: "Last updated",
-      }),
-    ).not.toBeInTheDocument();
   });
 
   it("can expand the repo item", async () => {
@@ -305,11 +297,13 @@ describe(RepoRow.name, () => {
       status: VariantAnalysisRepoStatus.TimedOut,
     });
 
-    await userEvent.click(
-      screen.getByRole("button", {
-        expanded: false,
-      }),
-    );
+    await act(async () => {
+      await userEvent.click(
+        screen.getByRole("button", {
+          expanded: false,
+        }),
+      );
+    });
 
     screen.getByRole("button", {
       expanded: true,
@@ -320,15 +314,21 @@ describe(RepoRow.name, () => {
   it("can expand the repo item when succeeded and loaded", async () => {
     render({
       status: VariantAnalysisRepoStatus.Succeeded,
-      downloadStatus: VariantAnalysisScannedRepositoryDownloadStatus.Succeeded,
+      downloadState: {
+        repositoryId: 1,
+        downloadStatus:
+          VariantAnalysisScannedRepositoryDownloadStatus.Succeeded,
+      },
       interpretedResults: [],
     });
 
-    await userEvent.click(
-      screen.getByRole("button", {
-        expanded: false,
-      }),
-    );
+    await act(async () => {
+      await userEvent.click(
+        screen.getByRole("button", {
+          expanded: false,
+        }),
+      );
+    });
 
     expect(
       screen.getByRole("button", {
@@ -340,16 +340,22 @@ describe(RepoRow.name, () => {
   it("can expand the repo item when succeeded and not loaded", async () => {
     const { rerender } = render({
       status: VariantAnalysisRepoStatus.Succeeded,
-      downloadStatus: VariantAnalysisScannedRepositoryDownloadStatus.Succeeded,
+      downloadState: {
+        repositoryId: 1,
+        downloadStatus:
+          VariantAnalysisScannedRepositoryDownloadStatus.Succeeded,
+      },
     });
 
-    await userEvent.click(
-      screen.getByRole("button", {
-        expanded: false,
-      }),
-    );
+    await act(async () => {
+      await userEvent.click(
+        screen.getByRole("button", {
+          expanded: false,
+        }),
+      );
+    });
 
-    expect((window as any).vsCodeApi.postMessage).toHaveBeenCalledWith({
+    expect(window.vsCodeApi.postMessage).toHaveBeenCalledWith({
       t: "requestRepositoryResults",
       repositoryFullName: "octodemo/hello-world-1",
     });
@@ -411,7 +417,10 @@ describe(RepoRow.name, () => {
   it("does not allow selecting the item if the item has not been downloaded successfully", async () => {
     render({
       status: VariantAnalysisRepoStatus.Succeeded,
-      downloadStatus: VariantAnalysisScannedRepositoryDownloadStatus.Failed,
+      downloadState: {
+        repositoryId: 1,
+        downloadStatus: VariantAnalysisScannedRepositoryDownloadStatus.Failed,
+      },
     });
 
     // It seems like sometimes the first render doesn't have the checkbox disabled
@@ -424,7 +433,11 @@ describe(RepoRow.name, () => {
   it("allows selecting the item if the item has been downloaded", async () => {
     render({
       status: VariantAnalysisRepoStatus.Succeeded,
-      downloadStatus: VariantAnalysisScannedRepositoryDownloadStatus.Succeeded,
+      downloadState: {
+        repositoryId: 1,
+        downloadStatus:
+          VariantAnalysisScannedRepositoryDownloadStatus.Succeeded,
+      },
     });
 
     expect(screen.getByRole("checkbox")).toBeEnabled();
