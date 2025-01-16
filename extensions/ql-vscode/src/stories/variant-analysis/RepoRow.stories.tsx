@@ -1,20 +1,20 @@
-import React from "react";
-
-import { ComponentMeta, ComponentStory } from "@storybook/react";
+import type { Meta, StoryFn } from "@storybook/react";
 
 import { VariantAnalysisContainer } from "../../view/variant-analysis/VariantAnalysisContainer";
 import {
   VariantAnalysisRepoStatus,
   VariantAnalysisScannedRepositoryDownloadStatus,
-} from "../../remote-queries/shared/variant-analysis";
-import {
+} from "../../variant-analysis/shared/variant-analysis";
+import type {
   AnalysisAlert,
   AnalysisRawResults,
-} from "../../remote-queries/shared/analysis-result";
-import { createMockRepositoryWithMetadata } from "../../vscode-tests/factories/remote-queries/shared/repository";
+} from "../../variant-analysis/shared/analysis-result";
+import { createMockRepositoryWithMetadata } from "../../../test/factories/variant-analysis/shared/repository";
 
-import analysesResults from "../remote-queries/data/analysesResultsMessage.json";
-import rawResults from "../remote-queries/data/rawResults.json";
+import { analysesResults } from "../data/analysesResultsMessage.json";
+// eslint-disable-next-line import/no-namespace -- We need the full JSON object, so we can't use named imports
+import * as rawResults from "../data/rawResults.json";
+import type { RepoRowProps } from "../../view/variant-analysis/RepoRow";
 import { RepoRow } from "../../view/variant-analysis/RepoRow";
 
 export default {
@@ -27,9 +27,9 @@ export default {
       </VariantAnalysisContainer>
     ),
   ],
-} as ComponentMeta<typeof RepoRow>;
+} as Meta<typeof RepoRow>;
 
-const Template: ComponentStory<typeof RepoRow> = (args) => (
+const Template: StoryFn<typeof RepoRow> = (args: RepoRowProps) => (
   <RepoRow {...args} />
 );
 
@@ -77,7 +77,22 @@ SucceededDownloading.args = {
   ...Pending.args,
   status: VariantAnalysisRepoStatus.Succeeded,
   resultCount: 198,
-  downloadStatus: VariantAnalysisScannedRepositoryDownloadStatus.InProgress,
+  downloadState: {
+    repositoryId: 63537249,
+    downloadStatus: VariantAnalysisScannedRepositoryDownloadStatus.InProgress,
+  },
+};
+
+export const SucceededDownloadingWithPercentage = Template.bind({});
+SucceededDownloadingWithPercentage.args = {
+  ...Pending.args,
+  status: VariantAnalysisRepoStatus.Succeeded,
+  resultCount: 198,
+  downloadState: {
+    repositoryId: 63537249,
+    downloadStatus: VariantAnalysisScannedRepositoryDownloadStatus.InProgress,
+    downloadPercentage: 42,
+  },
 };
 
 export const SucceededSuccessfulDownload = Template.bind({});
@@ -85,7 +100,10 @@ SucceededSuccessfulDownload.args = {
   ...Pending.args,
   status: VariantAnalysisRepoStatus.Succeeded,
   resultCount: 198,
-  downloadStatus: VariantAnalysisScannedRepositoryDownloadStatus.Succeeded,
+  downloadState: {
+    repositoryId: 63537249,
+    downloadStatus: VariantAnalysisScannedRepositoryDownloadStatus.Succeeded,
+  },
 };
 
 export const SucceededFailedDownload = Template.bind({});
@@ -93,7 +111,10 @@ SucceededFailedDownload.args = {
   ...Pending.args,
   status: VariantAnalysisRepoStatus.Succeeded,
   resultCount: 198,
-  downloadStatus: VariantAnalysisScannedRepositoryDownloadStatus.Failed,
+  downloadState: {
+    repositoryId: 63537249,
+    downloadStatus: VariantAnalysisScannedRepositoryDownloadStatus.Failed,
+  },
 };
 
 export const InterpretedResults = Template.bind({});
@@ -101,9 +122,9 @@ InterpretedResults.args = {
   ...Pending.args,
   status: VariantAnalysisRepoStatus.Succeeded,
   resultCount: 198,
-  interpretedResults: analysesResults.analysesResults.find(
+  interpretedResults: analysesResults.find(
     (v) => v.nwo === "facebook/create-react-app",
-  )?.interpretedResults as unknown as AnalysisAlert[],
+  )?.interpretedResults as AnalysisAlert[],
 };
 
 export const RawResults = Template.bind({});
@@ -111,7 +132,7 @@ RawResults.args = {
   ...InterpretedResults.args,
   interpretedResults: undefined,
   resultCount: 1,
-  rawResults: rawResults as unknown as AnalysisRawResults,
+  rawResults: rawResults as AnalysisRawResults,
 };
 
 export const SkippedOnlyFullName = Template.bind({});

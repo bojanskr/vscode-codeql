@@ -1,26 +1,15 @@
-import React from "react";
-
-import { ComponentStory, ComponentMeta } from "@storybook/react";
-import { ThemeProvider } from "@primer/react";
+import type { Meta, StoryFn } from "@storybook/react";
 
 import { CodePaths } from "../../view/common";
-import type { CodeFlow } from "../../remote-queries/shared/analysis-result";
+import type { CodeFlow } from "../../variant-analysis/shared/analysis-result";
 
 export default {
   title: "Code Paths",
   component: CodePaths,
-  decorators: [
-    (Story) => (
-      <ThemeProvider colorMode="auto">
-        <Story />
-      </ThemeProvider>
-    ),
-  ],
-} as ComponentMeta<typeof CodePaths>;
+  decorators: [(Story) => <Story />],
+} as Meta<typeof CodePaths>;
 
-const Template: ComponentStory<typeof CodePaths> = (args) => (
-  <CodePaths {...args} />
-);
+const Template: StoryFn<typeof CodePaths> = (args) => <CodePaths {...args} />;
 
 export const PowerShell = Template.bind({});
 

@@ -1,10 +1,8 @@
-import * as React from "react";
-import styled from "styled-components";
-import classNames from "classnames";
+import { styled } from "styled-components";
 
 type Props = {
   name: string;
-  label: string;
+  label?: string;
   className?: string;
   slot?: string;
 };
@@ -17,7 +15,8 @@ export const Codicon = ({ name, label, className, slot }: Props) => (
   <CodiconIcon
     role="img"
     aria-label={label}
-    className={classNames("codicon", `codicon-${name}`, className)}
+    title={label}
+    className={`codicon codicon-${name}${className ? ` ${className}` : ""}`}
     slot={slot}
   />
 );

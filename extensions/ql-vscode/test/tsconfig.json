@@ -1,7 +1,7 @@
 {
   "extends": "../tsconfig.json",
-  "include": ["**/*.ts"],
-  "exclude": [],
+  "include": ["**/*.ts", "../src/**/*.ts", "**/.eslintrc.js", "**/*.config.js"],
+  "exclude": ["../src/view/**/*.ts"],
   "compilerOptions": {
     "noEmit": true,
     "resolveJsonModule": true,

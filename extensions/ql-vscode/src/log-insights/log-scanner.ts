@@ -1,5 +1,6 @@
-import { SummaryEvent } from "./log-summary";
-import { readJsonlFile } from "./jsonl-reader";
+import type { SummaryEvent } from "./log-summary";
+import { readJsonlFile } from "../common/jsonl-reader";
+import type { Disposable } from "../common/disposable-object";
 
 /**
  * Callback interface used to report diagnostics from a log scanner.
@@ -62,13 +63,6 @@ export interface EvaluationLogScannerProvider {
   ): EvaluationLogScanner;
 }
 
-/**
- * Same as VSCode's `Disposable`, but avoids a dependency on VS Code.
- */
-export interface Disposable {
-  dispose(): void;
-}
-
 export class EvaluationLogScannerSet {
   private readonly scannerProviders = new Map<
     number,
@@ -109,7 +103,7 @@ export class EvaluationLogScannerSet {
       p.createScanner(problemReporter),
     );
 
-    await readJsonlFile(jsonSummaryLocation, async (obj) => {
+    await readJsonlFile<SummaryEvent>(jsonSummaryLocation, async (obj) => {
       scanners.forEach((scanner) => {
         scanner.onEvent(obj);
       });

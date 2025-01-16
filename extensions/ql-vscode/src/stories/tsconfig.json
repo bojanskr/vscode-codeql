@@ -2,19 +2,19 @@
   "compilerOptions": {
     "module": "esnext",
     "moduleResolution": "node",
-    "target": "es6",
+    "target": "es2021",
     "outDir": "out",
     "lib": ["ES2021", "dom"],
-    "jsx": "react",
+    "jsx": "react-jsx",
     "sourceMap": true,
-    "rootDir": "..",
+    "rootDir": "../../..",
     "strict": true,
     "noUnusedLocals": true,
     "noImplicitReturns": true,
     "noFallthroughCasesInSwitch": true,
     "experimentalDecorators": true,
     "resolveJsonModule": true,
-    "allowSyntheticDefaultImports": true
+    "skipLibCheck": true
   },
   "exclude": ["node_modules"]
 }

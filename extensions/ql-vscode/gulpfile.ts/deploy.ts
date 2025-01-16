@@ -8,6 +8,8 @@ import {
   writeFile,
 } from "fs-extra";
 import { resolve, join } from "path";
+import { isDevBuild } from "./dev";
+import type packageJsonType from "../package.json";
 
 export interface DeployedPackage {
   distPath: string;
@@ -22,33 +24,35 @@ const packageFiles = [
   "language-configuration.json",
   "snippets.json",
   "media",
-  "node_modules",
   "out",
-  "workspace-databases-schema.json",
+  "databases-schema.json",
 ];
+
+async function copyDirectory(
+  sourcePath: string,
+  destPath: string,
+): Promise<void> {
+  console.log(`copying ${sourcePath} to ${destPath}`);
+  await copy(sourcePath, destPath);
+}
 
 async function copyPackage(
   sourcePath: string,
   destPath: string,
 ): Promise<void> {
-  for (const file of packageFiles) {
-    console.log(
-      `copying ${resolve(sourcePath, file)} to ${resolve(destPath, file)}`,
-    );
-    await copy(resolve(sourcePath, file), resolve(destPath, file));
-  }
+  await Promise.all(
+    packageFiles.map((file) =>
+      copyDirectory(resolve(sourcePath, file), resolve(destPath, file)),
+    ),
+  );
 }
 
-export async function deployPackage(
-  packageJsonPath: string,
-): Promise<DeployedPackage> {
+export async function deployPackage(): Promise<DeployedPackage> {
   try {
-    const packageJson: any = JSON.parse(
-      await readFile(packageJsonPath, "utf8"),
+    const packageJson: typeof packageJsonType = JSON.parse(
+      await readFile(resolve(__dirname, "../package.json"), "utf8"),
     );
 
-    // Default to development build; use flag --release to indicate release build.
-    const isDevBuild = !process.argv.includes("--release");
     const distDir = join(__dirname, "../../../dist");
     await mkdirs(distDir);
 

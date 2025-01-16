@@ -1,10 +1,8 @@
-import React from "react";
-
-import { ComponentMeta, ComponentStory } from "@storybook/react";
+import type { Meta, StoryFn } from "@storybook/react";
 
 import { VariantAnalysisContainer } from "../../view/variant-analysis/VariantAnalysisContainer";
 import { VariantAnalysisSkippedRepositoriesTab } from "../../view/variant-analysis/VariantAnalysisSkippedRepositoriesTab";
-import { createMockRepositoryWithMetadata } from "../../vscode-tests/factories/remote-queries/shared/repository";
+import { createMockRepositoryWithMetadata } from "../../../test/factories/variant-analysis/shared/repository";
 
 export default {
   title: "Variant Analysis/Variant Analysis Skipped Repositories Tab",
@@ -16,9 +14,9 @@ export default {
       </VariantAnalysisContainer>
     ),
   ],
-} as ComponentMeta<typeof VariantAnalysisSkippedRepositoriesTab>;
+} as Meta<typeof VariantAnalysisSkippedRepositoriesTab>;
 
-const Template: ComponentStory<typeof VariantAnalysisSkippedRepositoriesTab> = (
+const Template: StoryFn<typeof VariantAnalysisSkippedRepositoriesTab> = (
   args,
 ) => <VariantAnalysisSkippedRepositoriesTab {...args} />;
 

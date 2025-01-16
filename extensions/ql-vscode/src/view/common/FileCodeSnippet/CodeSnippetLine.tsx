@@ -1,11 +1,10 @@
-import * as React from "react";
-import styled from "styled-components";
+import { styled } from "styled-components";
 
-import {
+import type {
   AnalysisMessage,
   HighlightedRegion,
   ResultSeverity,
-} from "../../../remote-queries/shared/analysis-result";
+} from "../../../variant-analysis/shared/analysis-result";
 import { CodeSnippetCode } from "./CodeSnippetCode";
 import { CodeSnippetMessage } from "./CodeSnippetMessage";
 
@@ -53,7 +52,7 @@ export const CodeSnippetLine = ({
     message &&
     severity &&
     highlightedRegion &&
-    highlightedRegion.endLine == startingLineIndex + lineIndex;
+    highlightedRegion.endLine === startingLineIndex + lineIndex;
 
   return (
     <div>

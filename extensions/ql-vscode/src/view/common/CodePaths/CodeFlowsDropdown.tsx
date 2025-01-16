@@ -1,8 +1,8 @@
-import * as React from "react";
-import { ChangeEvent, SetStateAction, useCallback } from "react";
+import type { ChangeEvent, SetStateAction } from "react";
+import { useCallback } from "react";
 import { VSCodeDropdown, VSCodeOption } from "@vscode/webview-ui-toolkit/react";
 
-import { CodeFlow } from "../../../remote-queries/shared/analysis-result";
+import type { CodeFlow } from "../../../variant-analysis/shared/analysis-result";
 
 const getCodeFlowName = (codeFlow: CodeFlow) => {
   const filePath =
@@ -12,26 +12,32 @@ const getCodeFlowName = (codeFlow: CodeFlow) => {
 
 type CodeFlowsDropdownProps = {
   codeFlows: CodeFlow[];
+  selectedCodeFlow: CodeFlow;
   setSelectedCodeFlow: (value: SetStateAction<CodeFlow>) => void;
 };
 
 export const CodeFlowsDropdown = ({
   codeFlows,
+  selectedCodeFlow,
   setSelectedCodeFlow,
 }: CodeFlowsDropdownProps) => {
   const handleChange = useCallback(
     (e: ChangeEvent<HTMLSelectElement>) => {
       const selectedOption = e.target;
-      const selectedIndex = selectedOption.value as unknown as number;
+      const selectedIndex = parseInt(selectedOption.value);
       setSelectedCodeFlow(codeFlows[selectedIndex]);
     },
     [setSelectedCodeFlow, codeFlows],
   );
 
+  const value = codeFlows
+    .findIndex((codeFlow) => selectedCodeFlow === codeFlow)
+    .toString();
+
   return (
-    <VSCodeDropdown onChange={handleChange}>
+    <VSCodeDropdown value={value} onChange={handleChange}>
       {codeFlows.map((codeFlow, index) => (
-        <VSCodeOption key={index} value={index}>
+        <VSCodeOption key={index} value={index.toString()}>
           {getCodeFlowName(codeFlow)}
         </VSCodeOption>
       ))}

@@ -1,10 +1,8 @@
-import * as React from "react";
-
-import {
+import type {
   AnalysisMessage,
   CodeFlow,
   ResultSeverity,
-} from "../../../remote-queries/shared/analysis-result";
+} from "../../../variant-analysis/shared/analysis-result";
 import { ThreadPath } from "./ThreadPath";
 
 type CodePathProps = {

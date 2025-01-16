@@ -1,10 +1,12 @@
-import {
+import type {
   FromCompareViewMessage,
-  FromRemoteQueriesMessage,
+  FromMethodModelingMessage,
+  FromModelAlertsMessage,
+  FromModelEditorMessage,
   FromResultsViewMsg,
   FromVariantAnalysisMessage,
   VariantAnalysisState,
-} from "../pure/interface-types";
+} from "../common/interface-types";
 
 export interface VsCodeApi {
   /**
@@ -14,8 +16,10 @@ export interface VsCodeApi {
     msg:
       | FromResultsViewMsg
       | FromCompareViewMessage
-      | FromRemoteQueriesMessage
-      | FromVariantAnalysisMessage,
+      | FromVariantAnalysisMessage
+      | FromModelEditorMessage
+      | FromMethodModelingMessage
+      | FromModelAlertsMessage,
   ): void;
 
   /**
